@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
         }
 
         // GET api/city
-        [HttpGet]
+        [HttpGet("cities")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCities()
         {
@@ -61,8 +61,6 @@ namespace WebAPI.Controllers
                 cityFromDB.LastUpdatedBy = 1;
                 cityFromDB.LastUpdatedOn = DateTime.Now;
                 mapper.Map(cityDTO, cityFromDB);
-
-                throw new Exception("Some unkown error occured");
                 await uow.SaveAsync();
                 return StatusCode(200);
             } catch {

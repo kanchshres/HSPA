@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormBuilder, ValidationErrors, AbstractControl } from '@angular/forms';
-import { UserService } from 'src/app/services/user.service';
-import { User } from '../../model/user';
+import { AuthService } from 'src/app/services/auth.service';
+import { UserForRegister } from '../../model/user';
 import { AlertifyService } from 'src/app/services/alertify.service';
 
 @Component({
@@ -12,11 +12,11 @@ import { AlertifyService } from 'src/app/services/alertify.service';
 
 export class UserRegisterComponent implements OnInit {
   registrationForm: FormGroup
-  user: User;
+  user: UserForRegister;
   userSubmitted: boolean = false;
 
   constructor(private fb:FormBuilder,
-              private userService: UserService,
+              private authService: AuthService,
               private alertify: AlertifyService) { }
 
   ngOnInit() {
@@ -41,17 +41,19 @@ export class UserRegisterComponent implements OnInit {
   onSubmit() {
     console.log(this.registrationForm.value);
     this.userSubmitted = true;
-    if (this.registrationForm.valid) {
-      this.userService.addUsers(this.userData());
-      this.registrationForm.reset();
-      this.userSubmitted = false;
-      this.alertify.success("Congrats, you have successfuly registered!")
-    } else{
-      this.alertify.error("Registration failed. Please ensure all fields are filled out properly!")
-    }
+
+      this.authService.registerUser(this.userData()).subscribe(() =>
+      {
+        this.registrationForm.reset();
+        this.userSubmitted = false;
+        this.alertify.success("Congrats, you have successfuly registered!")
+      }, error => {
+        console.log(error);
+        this.alertify.error(error.error);
+      });
   }
 
-  userData(): User {
+  userData(): UserForRegister {
     return this.user = {
       userName: this.userName.value,
       email: this.email.value,

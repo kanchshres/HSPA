@@ -8,20 +8,25 @@ namespace WebAPI.Errors
 {
     public class APIError
     {
-        public APIError(int errorCode, string errorMesage, string errorDetails)
+        public APIError() {}
+        public APIError(int errorCode, string errorMessage, string errorDetails)
         {
             ErrorCode = errorCode;
-            ErrorMesage = errorMesage;
+            ErrorMessage = errorMessage;
             ErrorDetails = errorDetails;
         }
 
         public int ErrorCode { get; set; }
-        public string ErrorMesage { get; set; }
+        public string ErrorMessage { get; set; }
         public string ErrorDetails { get; set; }
 
         public override string ToString()
         {
-            return JsonSerializer.Serialize(this);
+            var options = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            return JsonSerializer.Serialize(this, options);
         }
     }
 }

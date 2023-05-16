@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.DTOs;
+using WebAPI.Errors;
+using WebAPI.Extensions;
 using WebAPI.Interfaces;
 using WebAPI.Models;
 
@@ -30,10 +32,15 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Login(LoginReqDTO loginReq)
         {
             var user = await uow.UserRepository.Authenticate(loginReq.userName, loginReq.password);
+
+            APIError apiError = new APIError();
             
             if (user == null)
             {
-                return Unauthorized("Invalid User ID or Password");
+                apiError.ErrorCode=Unauthorized().StatusCode;
+                apiError.ErrorMessage="Invalid user name or password";
+                apiError.ErrorDetails="This error appears when provided user name or password does not exist";
+                return Unauthorized(apiError);
             }
             
             var loginRes = new LoginResDTO();
@@ -45,8 +52,18 @@ namespace WebAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(LoginReqDTO loginReq)
         {
-            if (await uow.UserRepository.UserAlreadyExists(loginReq.userName))
-            return BadRequest("User already exists, please try something else");
+            APIError apiError = new APIError();
+            if (loginReq.userName.IsEmpty() || loginReq.password.IsEmpty()) {
+                    apiError.ErrorCode = BadRequest().StatusCode;
+                    apiError.ErrorMessage = "User name or password can not be blank";
+                    return BadRequest(apiError);
+            }
+
+            if (await uow.UserRepository.UserAlreadyExists(loginReq.userName)) {
+                apiError.ErrorCode=BadRequest().StatusCode;
+                apiError.ErrorMessage="User already exists, please try something else";
+                return BadRequest(apiError);
+            }
             
             uow.UserRepository.Register(loginReq.userName, loginReq.password);
             await uow.SaveAsync();

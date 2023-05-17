@@ -46,7 +46,7 @@
                   <div
                     class="btn-group"
                     btnRadioGroup
-                    [(ngModel)]="propertyView.BHK"
+                    [(ngModel)]="propertyView.bhk"
                     formControlName="BHK"
                   >
                     <label
@@ -70,7 +70,7 @@
                     class="btn-group"
                     btnRadioGroup
                     formControlName="PType"
-                    [(ngModel)]="propertyView.PType"
+                    [(ngModel)]="propertyView.propertyType"
                   >
                     <label
                       *ngFor="let ptype of propertyTypes"
@@ -92,7 +92,7 @@
                   <div
                     class="btn-group"
                     btnRadioGroup
-                    [(ngModel)]="propertyView.FType"
+                    [(ngModel)]="propertyView.furnishingType"
                     formControlName="FType"
                   >
                     <label
@@ -120,7 +120,7 @@
                     formControlName="Name"
                     required
                     minlength="5"
-                    [(ngModel)]="propertyView.Name"
+                    [(ngModel)]="propertyView.name"
                   />
                   <div
                     class="error-block"
@@ -135,7 +135,7 @@
                   <select
                     type="text"
                     class="form-control"
-                    [(ngModel)]="propertyView.City"
+                    [(ngModel)]="propertyView.city"
                     formControlName="City">
                   <option selected value="">--Select City--</option>
                   <option *ngFor="let city of cityList"
@@ -170,7 +170,7 @@
                     type="text"
                     class="form-control"
                     formControlName="Price"
-                    [(ngModel)]="propertyView.Price"
+                    [(ngModel)]="propertyView.price"
                   />
                   <div
                     class="error-block"
@@ -209,7 +209,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    [(ngModel)]="propertyView.BuiltArea"
+                    [(ngModel)]="propertyView.builtArea"
                     formControlName="BuiltArea"
                   />
                   <div

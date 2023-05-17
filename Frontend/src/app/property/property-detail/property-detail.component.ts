@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
-import { Property } from 'src/app/model/Property';
+import { Property } from 'src/app/model/property';
 import { HousingService } from 'src/app/services/housing.service';
 
 @Component({
@@ -10,10 +10,10 @@ import { HousingService } from 'src/app/services/housing.service';
   styleUrls: ['./property-detail.component.css']
 })
 export class PropertyDetailComponent implements OnInit {
-public propertyID: number;
-property = new Property();
-galleryOptions: NgxGalleryOptions[];
-galleryImages: NgxGalleryImage[];
+  public propertyID: number;
+  property = new Property();
+  galleryOptions: NgxGalleryOptions[];
+  galleryImages: NgxGalleryImage[];
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -26,6 +26,8 @@ galleryImages: NgxGalleryImage[];
         this.property = data['prp'];
       }
     );
+
+    this.property.age = this.housingService.getPropertyAge(this.property.estPossessionOn);
     this.galleryOptions = [
       {
         width: '100%',

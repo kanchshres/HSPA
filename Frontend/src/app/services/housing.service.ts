@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Property } from '../model/Property';
+import { Property } from 'src/app/model/property';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -19,46 +19,11 @@ export class HousingService {
   }
 
   getProperty(ID: number) {
-    return this.getAllProperties().pipe(
-      map(propertiesArray => {
-        return propertiesArray.find(p => p.ID === ID);
-      })
-    );
+    return this.http.get<Property>(this.baseUrl + "/property/detail/" + ID.toString());
   }
 
   getAllProperties(SellOrRent?: number): Observable<Property[]> {
-    return this.http.get('data/properties.json').pipe(
-      map(data => {
-      const propertiesArray: Array<Property> = [];
-      const localProperties = JSON.parse(localStorage.getItem('newProp'));
-
-      if (localProperties) {
-        for (const id in localProperties) {
-          if (SellOrRent) {
-            if (localProperties.hasOwnProperty(id) && localProperties[id].SellOrRent === SellOrRent) {
-              propertiesArray.push(localProperties[id]);
-            }
-          }
-          else {
-            propertiesArray.push(localProperties[id]);
-          }
-        }
-      }
-
-      for (const id in data) {
-        if (SellOrRent) {
-          if (data.hasOwnProperty(id) && data[id].SellOrRent === SellOrRent) {
-            propertiesArray.push(data[id]);
-          }
-        }
-        else {
-          propertiesArray.push(data[id]);
-        }
-      }
-      return propertiesArray;
-      })
-    );
-    return this.http.get<Property[]>('data/properties.json');
+    return this.http.get<Property[]>(this.baseUrl + "/property/list/" + SellOrRent.toString());
   }
 
   addProperty(property: Property) {
@@ -78,5 +43,31 @@ export class HousingService {
       localStorage.setItem('PID', '101');
       return 101;
     }
+  }
+
+  getPropertyAge(dateOfEstablishment: Date): string
+  {
+    const today = new Date();
+    const estDate = new Date(dateOfEstablishment);
+    let age = today.getFullYear() - estDate.getFullYear();
+    const m = today.getMonth() - estDate.getMonth();
+
+    // Current month smaller than establishment month or
+    // Same month but current date smalelr than establishment date
+    if (m < 0 || (m === 0 && today.getDate() < estDate.getDate())) {
+      age --;
+    }
+
+    // Establishment date is future date
+    if (today < estDate) {
+      return '0';
+    }
+
+    // Age is less than a year
+    if (age === 0) {
+      return 'Less than a year';
+    }
+
+    return age.toString();
   }
 }

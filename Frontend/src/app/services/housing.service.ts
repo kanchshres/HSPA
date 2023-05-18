@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Property } from 'src/app/model/property';
 import { environment } from '../../environments/environment';
+import { IKeyValuePair } from '../model/ikeyvaluepair';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,14 @@ export class HousingService {
     return this.http.get<string[]>(this.baseUrl + '/city/cities');
   }
 
+  getPropertyTypes(): Observable<IKeyValuePair[]> {
+    return this.http.get<IKeyValuePair[]>(this.baseUrl + '/propertytype/list');
+  }
+
+  getFurnishingTypes(): Observable<IKeyValuePair[]> {
+    return this.http.get<IKeyValuePair[]>(this.baseUrl + '/furnishingtype/list');
+  }
+
   getProperty(ID: number) {
     return this.http.get<Property>(this.baseUrl + "/property/detail/" + ID.toString());
   }
@@ -27,12 +36,12 @@ export class HousingService {
   }
 
   addProperty(property: Property) {
-    let newProp = [property];
-
-    if (localStorage.getItem('newProp')) {
-      newProp = [property, ...JSON.parse(localStorage.getItem('newProp'))];
-    }
-    localStorage.setItem('newProp', JSON.stringify(newProp));
+    const httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post(this.baseUrl + "/property/add", property, httpOptions);
   }
 
   newPropID() {
@@ -45,7 +54,7 @@ export class HousingService {
     }
   }
 
-  getPropertyAge(dateOfEstablishment: Date): string
+  getPropertyAge(dateOfEstablishment: string): string
   {
     const today = new Date();
     const estDate = new Date(dateOfEstablishment);

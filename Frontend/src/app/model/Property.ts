@@ -4,13 +4,16 @@ export class Property implements IPropertyBase {
   ID!: number;
   sellOrRent!: number;
   name!: string;
+  propertyTypeID: number;
   propertyType!: string;
+  furnishingTypeID: number;
   furnishingType!: string;
   price!: number;
   bhk!: number;
   builtArea!: number;
+  cityID: number;
   city!: string;
-  readyToMove!: number;
+  readyToMove!: boolean;
   image?: string;
   carpetArea?: number;
   address!: string;
@@ -22,7 +25,7 @@ export class Property implements IPropertyBase {
   security?: number;
   gated?: boolean;
   maintenance?: number;
-  estPossessionOn?: Date;
+  estPossessionOn?: string;
   description?: string;
   // PostedOn!: string;
   // PostedBy!: number;
